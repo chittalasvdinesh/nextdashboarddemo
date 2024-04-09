@@ -14,7 +14,6 @@ export default function handler(req, res) {
     }
 
     else if(req.method==="PATCH"){
-        console.log(req);
         const comment=req.body.comment;
         console.log("comment",comment)
         const newComment={
@@ -26,3 +25,4 @@ export default function handler(req, res) {
         res.status(200).json(newComment)
     }
 }
+
