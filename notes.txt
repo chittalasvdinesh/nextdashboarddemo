@@ -1,0 +1,229 @@
+
+-static generation:method of pre-rendering whre html pages are generated at build time
+-getStaticProps:
+runs only on server side.
+It wont be included in js bundle
+can write server side code
+useful for querying a database or accessing file system using  fs modules.
+cannnot be accessed outside the pages folder(because it allows only in pre-rendering but not client side).
+it should only return only object which contains props key which is an object.
+ex:return{
+    props:{data}
+}
+will run at build time. during dev it will runs on every request.
+
+when redirect to the posts page using Link then json is loaded.
+if it is redirect directly using url then html file is served.
+
+getStaticPaths-used for predecting posssible values/pages
+getStaticPaths{
+    return {
+        paths:{[params:]},
+        fallback:true | false | 'blocking'
+    }
+}
+
+fallback: false =>path not matched will return 404 page
+suitable for application with small number of paths to preRender
+
+
+fallback:true => large no of static pages. large e-commerce site
+ex:
+const Post = ({ data }) => {
+  const router=useRouter();
+  if(router.isFallback){
+    return <h2>Loading...</h2>
+  }
+  return (
+    <div>
+      <h1>{data.title}</h1>
+      <h2>
+        Id:{data.id}
+      </h2>
+      <h3>
+        userId:{data.userId}
+      </h3>
+      <p>
+        Description : {data.body}
+      </p>
+    </div>
+  )
+};
+
+export default Post;
+
+export async function getStaticPaths() {
+  const response = await fetch(`http://localhost:4000/posts`);
+  const posts = await response.json();
+  const paths = posts.map((val) => {
+    return { params: { postId: val.id.toString() } }
+  })
+  return {
+    paths,
+    fallback: true
+  }
+
+}
+
+export async function getStaticProps(context) {
+  const { params } = context;
+  const response = await fetch(`http://localhost:4000/posts/${params.postId}`);
+  const data = await response.json();
+
+  if(!data.id){
+    return {notFound:true}
+  }
+
+  console.log(`generating page for /posts/${params.postId}`)
+
+  return {
+    props: { data }
+  }
+
+}
+
+
+fallback:'blocking'
+ex:
+const Post = ({ data }) => {
+  // const router=useRouter();
+  // if(router.isFallback){
+  //   return <h2>Loading...</h2>
+  // }
+  return (
+    <div>
+      <h1>{data.title}</h1>
+      <h2>
+        Id:{data.id}
+      </h2>
+      <h3>
+        userId:{data.userId}
+      </h3>
+      <p>
+        Description : {data.body}
+      </p>
+    </div>
+  )
+};
+
+export default Post;
+
+export async function getStaticPaths() {
+  const response = await fetch(`http://localhost:4000/posts`);
+  const posts = await response.json();
+  const paths = posts.map((val) => {
+    return { params: { postId: val.id.toString() } }
+  })
+  return {
+    paths,
+    fallback: 'blocking'
+  }
+
+}
+
+export async function getStaticProps(context) {
+  const { params } = context;
+  const response = await fetch(`http://localhost:4000/posts/${params.postId}`);
+  const data = await response.json();
+
+  // if(!data.id){
+  //   return {notFound:true}
+  // }
+
+  console.log(`generating page for /posts/${params.postId}`)
+
+  return {
+    props: { data }
+  }
+
+}
+
+Issues with static generation:
+no.of.pages=build time. (build time will increase for big application).
+
+let say render 1000 pages at build time and then the rest are generated based on incoming request,
+ using fallback true or fallback blocking, changes in data will not update the already pre-rendered pages. 
+
+
+ getServerSideProps:
+ - runs only on server side.
+ -It wont be included in js bundle
+-can write server side code
+-useful for querying a database or accessing file system using  fs modules.
+- will run at request time.
+
+
+--with getStaticProps we can't get access of the incoming request.
+ but Incase of the getServerSideProps we can get the access of incoming request
+getServerSideProps({ params,req,res }) {
+    const { category} = params;
+    console.log(req,res)
+}
+
+ req-standard http incoming object.
+ res-http response object.
+
+
+ --Client side data fetching:
+ we might not use pre rendering always.
+ ex: user dashbard page
+ it is private, behind a login screen
+ highly user specific  and SEO is relevant
+
+ Gernerally we can useEffect and useState for fetching.
+ But useSWR is preferrable
+
+  SWR (state while revalidate) is a React Hooks library for remote data fetching with support for caching, revalidation, and error handling.
+ 
+ With SWR, components will get a stream of data updates constantly and automatically.
+And the UI will be always fast and reactive.
+
+ ex:import useSWR from 'swr'
+
+const fetcher=async () => {
+    const response = await fetch("http://localhost:4000/dashboard");
+    const data = await response.json();
+    return data
+}
+const DashboardSWR=()=>{
+    const{data,error}=useSWR('dashbaord',fetcher);
+    if(error) return 'An error has occured'
+    if(!data) return 'Loading';
+    return (
+        <>
+        <h1>Dashboard</h1>
+        <h2>Posts-{data.posts}</h2>
+        <h2>Likes-{data.likes}</h2>
+        <h2>Followers-{data.followers}</h2>
+        <h2>Following-{data.following}</h2>
+    </>
+    )
+};
+
+export default DashboardSWR;
+
+
+API routes:
+creates RESTful end points as part of your next.js application folder structure
+pages > api > ...
+
+ex:
+pages>api>index.js
+
+export default function handler(req,res){
+    res.status(200).json({name:"Home API router"})
+}
+
+
+//localhost:3000/api
+
+
+
+
+next export-
+export all your pages to static html files that can serve with out node.js server.
+we can host app without having to maintian server.
+cannnot use ISR or SSR
+client side fetching for dynamic content.
+
+

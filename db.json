@@ -1,0 +1,91 @@
+{
+    "events":[
+        {
+            "id":1,
+            "title":"Event 1",
+            "description":"Description 1",
+            "category":"sports",
+            "date":"April 25"
+        },
+        {
+            "id":2,
+            "title":"Event 2",
+            "description":"Description 2",
+            "category":"technology",
+            "date":"May 26"
+        },{
+            "id":3,
+            "title":"Event 3",
+            "description":"Description 3",
+            "category":"food",
+            "date":"June 27"
+        },
+        {
+            "id":4,
+            "title":"Event 4",
+            "description":"Description 4",
+            "category":"sports",
+            "date":"Jan 25"
+        },
+        {
+            "id":5,
+            "title":"Event 5",
+            "description":"Description 5",
+            "category":"technology",
+            "date":"May 5"
+        },{
+            "id":6,
+            "title":"Event 6",
+            "description":"Description 6",
+            "category":"food",
+            "date":"June 6"
+        }
+
+    ],
+    "posts": [
+        {
+            "id": 1,
+            "title": "Post 1",
+            "price": 4000,
+            "description": "Description 1"
+        },
+        {
+            "id": 2,
+            "title": "Post 2",
+            "price": 2000,
+            "description": "Description 2"
+        },
+        {
+            "id": 3,
+            "title": "Post 3",
+            "price": 3000,
+            "description": "Description 3"
+        }
+    ],
+    "news": [
+        {
+            "id": 1,
+            "title": "news 1",
+            "category": "sports",
+            "description": "Article 1"
+        },
+        {
+            "id": 2,
+            "title": "news 2",
+            "category": "politics",
+            "description": "Article 2"
+        },
+        {
+            "id": 3,
+            "title": "news 3",
+            "category": "sports",
+            "description": "Article 3"
+        }
+    ],
+    "dashboard":{
+        "posts":5,
+        "likes":1500,
+        "followers":20,
+        "following":50
+    }
+}
